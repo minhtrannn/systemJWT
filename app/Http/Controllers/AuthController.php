@@ -3,7 +3,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-
+use App\Repositories\Repository\UserRepository;
+use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     /**
@@ -11,21 +12,61 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
+
+    protected $userRepository;
+    public function __construct(UserRepository $userRepository)
     {
         $this->middleware('auth:api', ['except' => ['login']]);
+        $this->userRepository = $userRepository;
     }
 
-    public function updateInfor()
+    public function getUserInfor()
     {
-        // dd(1);
-        // $credentials = request(['password','name']);
+        if(!auth()->user())
+        {
+            return response()->json(['Message' => 'Not Authorized']);
+        }
+        else 
+        {
+            $id = auth()->user()->id;
+            $user = $this->userRepository->getSingle($id);
+            if($user == null)
+            {
+                return response()->json(['Message' => "This page doesn't exist"]);
+            }
+            else 
+            {
+                $post = $this->userRepository->getSingle($id);
+                return response()->json($user);
+            }
+        }
 
-        // if (! $token = auth()->attempt($credentials)) {
-        //     return response()->json(['error' => 'Unauthorized'], 401);
-        // }
+        // return response()->json(request(['password','name']));
+    }
 
-        return response()->json(request(['password','name']));
+    public function updateUserInfor()
+    {
+        if(!auth()->user())
+        {
+            return response()->json(['Message' => 'Not Authorized']);
+        }
+        else 
+        {
+            $user = array(
+                'name' => request('name'),
+                'email' => request('email'),
+                'password' => Hash::make(request('password'))
+            );
+            $userUpdated = $this->userRepository->updateUserInfor($user);
+            if($userUpdated)
+            {
+                return response()->json($userUpdated);
+            }   
+            else 
+            {
+                return response()->json(['Message' => 'Cannot update user']);
+            }
+        }
     }
 
     /**
@@ -40,7 +81,7 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
+        
         return $this->respondWithToken($token);
     }
 
@@ -89,7 +130,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
         ]);
     }
 }

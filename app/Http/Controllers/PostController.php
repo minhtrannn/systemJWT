@@ -26,6 +26,27 @@ class PostController extends Controller
         }
     }
 
+    public function getSingle($id)
+    {
+        if(!auth()->user())
+        {
+            return response()->json(['Message' => 'Not Authorized']);
+        }
+        else 
+        {
+            $post = $this->postRepository->find($id);
+            if($post == null)
+            {
+                return response()->json(['Message' => "This page doesn't exist"]);
+            }
+            else 
+            {
+                $post = $this->postRepository->getSingle($id);
+                return response()->json($post);
+            }
+        }
+    }
+
     public function createPost()
     {
         if(!auth()->user())

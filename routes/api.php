@@ -23,14 +23,15 @@ Route::group([
     'middleware' => 'api',
 
 ], function ($router) {
-
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::get('me', 'AuthController@me');
-    Route::post('updateInfor', 'AuthController@updateInfor');
+    Route::get('userInfor', 'AuthController@getUserInfor');
+    Route::post('updateInfor', 'AuthController@updateUserInfor');
     Route::post('createPost', 'PostController@createPost');
     Route::post('updatePost/{id}', 'PostController@updatePost');
-    Route::get('deletePost/{id}', 'PostController@deletePost');
+    Route::delete('deletePost/{id}', 'PostController@deletePost');
     Route::get('/post', 'PostController@getAllPost');
+    Route::get('/post/{id}', 'PostController@getSingle');
 });

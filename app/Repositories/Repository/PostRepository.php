@@ -14,6 +14,11 @@ class PostRepository implements RepositoryInterface
         return Post::orderBy('id', 'asc')->get();
     }
 
+    public function getSingle($id)
+    {
+        return Post::whereId($id)->first();
+    }
+
     public function find($id)
     {
         return Post::find($id);
@@ -41,10 +46,8 @@ class PostRepository implements RepositoryInterface
         $result = $this->find($id);
         if ($result) {
             $result->delete();
-
             return true;
         }
-
         return false;
     }
 }

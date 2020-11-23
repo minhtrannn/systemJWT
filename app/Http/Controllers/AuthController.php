@@ -78,11 +78,18 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         
         return $this->respondWithToken($token);
+    }
+
+    public function register()
+    {
+        $credentials = request(['name', 'email', 'password']);
+
+        $user = $this->userRepository->store($credentials);
     }
 
     /**

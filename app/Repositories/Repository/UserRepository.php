@@ -23,9 +23,13 @@ class UserRepository implements RepositoryInterface
 
     }
 
-    public function create(array $attributes)
+    public function store(array $attributes)
     {
-
+        $user = new User();
+        $user->name = $attributes->name;
+        $user->email = $attributes->email;
+        $user->password = $attributes->password;
+        $user->save();
     }
 
     public function update($id, array $attributes)

@@ -20,6 +20,6 @@ class Post extends Model
 
     public function user()
     {
-        $this->belongsTo('App\User');
+        $this->belongsTo('App\\Model\User');
     }
 }
